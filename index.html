@@ -27,13 +27,58 @@
                 border: none;
                 resize: none;
             }
+
+            #inputfile {
+                display: none;
+            }
+
         </style>
 
     </head>
 
     <body>
 
-        <textarea id="editor" spellcheck="false" placeholder="Scratchpad..."></textarea>
+        <textarea id="editor" spellcheck="false" autofocus placeholder="&NewLine; Scratchpad...&NewLine;&NewLine; CTRL + s: Save&NewLine; CTRL + o: Open&NewLine;&NewLine; Type to get started."></textarea>
+
+        <input type="file" name="inputfile" id="inputfile">
+
+        <script>
+
+            document.addEventListener("keydown", onKeyDown, false);
+
+            document.getElementById('inputfile').addEventListener('change', function() {
+                
+                var fr=new FileReader();
+                fr.onload=function(){
+                    document.getElementById('editor').value=fr.result;
+                }
+                
+                fr.readAsText(this.files[0]);
+            })
+            
+            function onKeyDown(e) {
+
+                if (e.keyCode == 83 && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) { // "CTRL+s"
+                    e.preventDefault();
+                    var textcontent = document.getElementById("editor").value;
+                    var downloadableLink = document.createElement('a');
+                    downloadableLink.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(textcontent));
+                    downloadableLink.download = `Scratchpad-${new Date().toLocaleString().replace(/, /g, "-").replace(/[:\/]/g, "_")}.txt`;
+                    document.body.appendChild(downloadableLink);
+                    downloadableLink.click();
+                    document.body.removeChild(downloadableLink);
+                }
+
+                if (e.keyCode == 79 && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) { // "CTRL+o"
+                    e.preventDefault();
+                    var eventMouse = document.createEvent("MouseEvents")
+	                eventMouse.initMouseEvent("click", true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
+	                document.getElementById("inputfile").dispatchEvent(eventMouse)
+                }
+
+            }
+
+        </script>
         
     </body>
 
