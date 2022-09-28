@@ -54,6 +54,55 @@
         <!-- Script -->
         <script>
 
+            // Define http get method.
+            function httpGet(location, callback) {
+
+                // Create & configure object.
+                var xmlHttp = new XMLHttpRequest();
+                xmlHttp.onreadystatechange = function() { 
+                    if (xmlHttp.readyState == 4 && xmlHttp.status == 200) callback(xmlHttp.responseText);
+                }
+
+                // Perform request.
+                xmlHttp.open("GET", location, true);
+                xmlHttp.send(null);
+
+            }
+
+            // Bind document load event listener.
+            window.onload = function() {
+
+                // Get url parameters.
+                let urlParams = new URLSearchParams(window.location.search);
+                let load = urlParams.get("load");
+                let from = urlParams.get("from");
+
+                // Load if needed.
+                if (load) {
+
+                    // Terminate if no from parameter.
+                    if (!from) return;
+
+                    // Process load parameter.
+                    load = load.toLowerCase();
+
+                    // Load: raw.
+                    if (load == "raw") {
+
+                        // Load raw data from url.
+                        httpGet(decodeURI(from), (data) => {
+                            document.getElementById("editor").value = data;
+                        })
+
+                    }
+
+                    // Delete parameters.
+                    window.history.replaceState({}, document.title, window.location.href.split('?')[0]);
+
+                }
+
+            };
+
             // Bind keyboard shortcut event listener.
             document.addEventListener("keydown", (e) => {
 
@@ -64,10 +113,10 @@
                     e.preventDefault();
 
                     // Get contents of editor.
-                    var textcontent = document.getElementById("editor").value;
+                    let textcontent = document.getElementById("editor").value;
 
                     // Generate downloadable link.
-                    var downloadableLink = document.createElement('a');
+                    let downloadableLink = document.createElement('a');
                     downloadableLink.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(textcontent));
                     downloadableLink.download = `Scratchpad-${new Date().toLocaleString().replace(/, /g, "-").replace(/[:\/]/g, "_")}.txt`;
 
@@ -78,14 +127,14 @@
 
                 }
 
-                 // "CTRL + o" (Open)
+                // "CTRL + o" (Open)
                 if (e.keyCode == 79 && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
 
                     // Prevent browser default.
                     e.preventDefault();
 
                     // Generate click of browse button.
-                    var eventMouse = document.createEvent("MouseEvents");
+                    let eventMouse = document.createEvent("MouseEvents");
 	                eventMouse.initMouseEvent("click", true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
 
                     // Activate click of browse button.
@@ -96,14 +145,14 @@
             }, false);
 
             // Bind file load event listener.
-            document.getElementById('inputfile').addEventListener('change', function() {
+            document.getElementById('inputfile').addEventListener('change', () => {
                 
                 // Get contents of file reader.
-                var fr=new FileReader();
+                let fr = new FileReader();
 
                 // Bind load event.
-                fr.onload=function(){
-                    document.getElementById('editor').value=fr.result;
+                fr.onload = function() {
+                    document.getElementById('editor').value = fr.result;
                 }
                 
                 // Perform load.
