@@ -46,7 +46,7 @@
     <body>
 
         <!-- Editing Box -->
-        <textarea id="editor" spellcheck="false" autofocus placeholder="&NewLine; Scratchpad...&NewLine;&NewLine; CTRL + s: Save&NewLine; CTRL + o: Open&NewLine;&NewLine; Type to get started."></textarea>
+        <textarea id="editor" spellcheck="false" autofocus placeholder="&NewLine; Scratchpad...&NewLine;&NewLine; CTRL + s: Save&NewLine; CTRL + o: Open&NewLine; CTRL + h: Help&NewLine;&NewLine; Type to get started."></textarea>
 
         <!-- File Loader -->
         <input type="file" name="inputfile" id="inputfile">
@@ -139,6 +139,29 @@
 
                     // Activate click of browse button.
 	                document.getElementById("inputfile").dispatchEvent(eventMouse);
+
+                }
+
+                // "CTRL + h" (Help)
+                if (e.keyCode == 72 && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
+
+                    // Prevent browser default.
+                    e.preventDefault();
+
+                    // Display alert.
+                    let msg = "";
+                    msg += "[ Scratchpad Help ]\n";
+                    msg += "\n";
+                    msg += "~ Saving Files:\n";
+                    msg += "\tClick anywhere on the page and press CTRL + s.\n";
+                    msg += "\n";
+                    msg += "~ Opening Files:\n";
+                    msg += "\tClick anywhere on the page and press CTRL + o.\n";
+                    msg += "\n";
+                    msg += "~ Editing Web Data:\n"
+                    msg += "\tAppend \"?load=[type]&from=[url]\" to Scratchpad's URL.\n"
+                    msg += "\tAvailable types include: raw.\n";
+                    alert(msg);
 
                 }
 
