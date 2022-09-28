@@ -88,12 +88,16 @@
 
                     // Load: raw.
                     if (load == "raw") {
-
-                        // Load raw data from url.
                         httpGet(decodeURI(from), (data) => {
                             document.getElementById("editor").value = data;
-                        })
+                        });
+                    }
 
+                    // Load: json.
+                    else if (load == "json") {
+                        httpGet(decodeURI(from), (data) => {
+                            document.getElementById("editor").value = JSON.stringify(JSON.parse(data), null, "    ");
+                        });
                     }
 
                     // Delete parameters.
@@ -160,7 +164,7 @@
                     msg += "\n";
                     msg += "~ Editing Web Data:\n"
                     msg += "\tAppend \"?load=[type]&from=[url]\" to Scratchpad's URL.\n"
-                    msg += "\tAvailable types include: raw.\n";
+                    msg += "\tAvailable types include: raw, json.\n";
                     alert(msg);
 
                 }
