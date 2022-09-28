@@ -4,16 +4,19 @@
 
     <head>
 
+        <!-- HTML5 Meta Tags -->
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	    
+        <!-- Identifiers -->
         <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUBAMAAAB/pwA+AAAAAXNSR0IB2cksfwAAAAlwSFlzAAALEwAACxMBAJqcGAAAABVQTFRFAAAA/Gz/AEgA/NgAIFoA/LSqAAAA51qtOQAAAAd0Uk5TAP///////6V/pvsAAAA/SURBVHicY2CAAgEYg4FREM5UEoQJM5sowoSNjZWgoszGxkZwQWMDuKAxDQVD4YIMocEwQYbUUJggQ1oojAUAbRwMZj2/gx8AAAAASUVORK5CYII=">
-
         <title>Scratchpad</title>
         
+        <!-- Stylesheet -->
         <style>
 
+            /* Main Body */
             body {
                 margin: 0; padding: 0;
                 height: 100%;
@@ -21,6 +24,7 @@
                 overflow: hidden;
             }
 
+            /* Editing Box */
             #editor {
                 font-family: 'Courier New', Courier, monospace;
                 margin: 0; padding: 0;
@@ -30,6 +34,7 @@
                 resize: none;
             }
 
+            /* File Loader */
             #inputfile {
                 display: none;
             }
@@ -40,45 +45,71 @@
 
     <body>
 
+        <!-- Editing Box -->
         <textarea id="editor" spellcheck="false" autofocus placeholder="&NewLine; Scratchpad...&NewLine;&NewLine; CTRL + s: Save&NewLine; CTRL + o: Open&NewLine;&NewLine; Type to get started."></textarea>
 
+        <!-- File Loader -->
         <input type="file" name="inputfile" id="inputfile">
 
+        <!-- Script -->
         <script>
 
-            document.addEventListener("keydown", onKeyDown, false);
+            // Bind keyboard shortcut event listener.
+            document.addEventListener("keydown", (e) => {
 
+                // "CTRL + s" (Save)
+                if (e.keyCode == 83 && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
+
+                    // Prevent browser default.
+                    e.preventDefault();
+
+                    // Get contents of editor.
+                    var textcontent = document.getElementById("editor").value;
+
+                    // Generate downloadable link.
+                    var downloadableLink = document.createElement('a');
+                    downloadableLink.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(textcontent));
+                    downloadableLink.download = `Scratchpad-${new Date().toLocaleString().replace(/, /g, "-").replace(/[:\/]/g, "_")}.txt`;
+
+                    // Activate downloadable link.
+                    document.body.appendChild(downloadableLink);
+                    downloadableLink.click();
+                    document.body.removeChild(downloadableLink);
+
+                }
+
+                 // "CTRL + o" (Open)
+                if (e.keyCode == 79 && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
+
+                    // Prevent browser default.
+                    e.preventDefault();
+
+                    // Generate click of browse button.
+                    var eventMouse = document.createEvent("MouseEvents");
+	                eventMouse.initMouseEvent("click", true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+
+                    // Activate click of browse button.
+	                document.getElementById("inputfile").dispatchEvent(eventMouse);
+
+                }
+
+            }, false);
+
+            // Bind file load event listener.
             document.getElementById('inputfile').addEventListener('change', function() {
                 
+                // Get contents of file reader.
                 var fr=new FileReader();
+
+                // Bind load event.
                 fr.onload=function(){
                     document.getElementById('editor').value=fr.result;
                 }
                 
+                // Perform load.
                 fr.readAsText(this.files[0]);
-            })
-            
-            function onKeyDown(e) {
 
-                if (e.keyCode == 83 && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) { // "CTRL+s"
-                    e.preventDefault();
-                    var textcontent = document.getElementById("editor").value;
-                    var downloadableLink = document.createElement('a');
-                    downloadableLink.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(textcontent));
-                    downloadableLink.download = `Scratchpad-${new Date().toLocaleString().replace(/, /g, "-").replace(/[:\/]/g, "_")}.txt`;
-                    document.body.appendChild(downloadableLink);
-                    downloadableLink.click();
-                    document.body.removeChild(downloadableLink);
-                }
-
-                if (e.keyCode == 79 && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) { // "CTRL+o"
-                    e.preventDefault();
-                    var eventMouse = document.createEvent("MouseEvents")
-	                eventMouse.initMouseEvent("click", true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
-	                document.getElementById("inputfile").dispatchEvent(eventMouse)
-                }
-
-            }
+            });
 
         </script>
         
